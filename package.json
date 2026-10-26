@@ -1,0 +1,23 @@
+{
+  "name": "@local/dsh-speed-meter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web"
+    }
+  },
+  "meta": {
+    "title": "实时输出速度",
+    "description": "在输入框下方显示实时输出速度（tok/s）：生成中滚动更新，空闲时显示上一轮的平均速度。"
+  }
+}
