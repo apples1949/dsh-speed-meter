@@ -1,8 +1,13 @@
 {
-  "name": "@local/dsh-speed-meter",
+  "name": "@apples1949/dsh-speed-meter",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apples1949/dsh-speed-meter.git"
+  },
+  "homepage": "https://github.com/apples1949/dsh-speed-meter#readme",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",

@@ -4,12 +4,13 @@
 
 | 项目 | 内容 |
 | --- | --- |
-| 包名 | `@local/dsh-speed-meter` |
-| 版本 | 0.1.0 |
+| 包名 | `@apples1949/dsh-speed-meter` |
+| 版本 | **不声明版本号**：跟随 `main` 分支，见 [更新与支持](#更新与支持) |
 | 类型 | DSH **客户端**插件（Web）；Host 侧 `lib/index.js` 是空 `apply()`，只负责让 Loader 行能解析 |
 | 挂载点 | slot `conversation.composer.dock`，`id: speed-meter`，`order: 10` |
 | 数据来源 | chat 快照 `legacy.partial` / `legacy.nodes` + `sessionStats` 投影 |
 | 定时器 | **没有**（无 `setInterval` / `rAF`）——显示刷新完全由流式增量驱动 |
+| 分发 | 只从本仓库装（没有发布到 npm）；也可通过自建格式 1 索引源在「插件 → 发现」里看到 |
 
 ## 它显示什么
 
@@ -59,12 +60,12 @@ useEffect([partial])
 
 本包**没有** `cordis.patch.yml`，所以不进 `dsh.profile.bundles`。它靠插件市场（`dshmarket`）的 *client-only shim* 挂载：
 
-1. profile 的 `package.json` 里加依赖（必须是 `link:` / `file:`，`@local/*` 不在任何 registry 上）：
+1. profile 的 `package.json` 里加依赖（本地路径用 `link:` / `file:`；本包**没有发布到 npm**，也可以直接 `pnpm add github:apples1949/dsh-speed-meter`）：
 
 ```jsonc
 {
   "dependencies": {
-    "@local/dsh-speed-meter": "link:../../plugins/dsh-speed-meter"
+    "@apples1949/dsh-speed-meter": "link:../../plugins/dsh-speed-meter"
   }
 }
 ```
@@ -73,11 +74,17 @@ useEffect([partial])
 3. 保持 `dshmarket` 启用。它启动时会为本包写一条热挂载行（`<profile>/.dsh-market/hot-1.yml`）：
 
 ```yaml
-- id: 'mkt-client--local-dsh-speed-meter'
+- id: 'mkt-client--apples1949-dsh-speed-meter'
   name: 'file:///C:/Users/<you>/.dsh/plugins/dsh-speed-meter/lib/index.js'
 ```
 
-日志里对应 `hot-mount: @local/dsh-speed-meter: live (client-only shim)`。
+日志里对应 `hot-mount: @apples1949/dsh-speed-meter: live (client-only shim)`。
+
+也可以直接从仓库装（不需要手写上面那行，市场会重新生成）：
+
+```sh
+dsh plugin --profile <profile> add github:apples1949/dsh-speed-meter
+```
 
 **生效**：它是客户端插件，刷新页面即可；改 `lib/client.js` 不需要重启宿主进程。
 
@@ -99,6 +106,13 @@ useEffect([partial])
 - 组件状态不绑 `sessionId`；切会话时可能短暂显示上一会话的读数（`spanRef` 只按 `turn/step` 配对）。
 - 文案（"上轮均值" / "会话均值" / tooltip）硬编码中文，没走客户端 locale。
 - 注入的 `<style>` 在 `apply()` 里直接 append，没有包 `ctx.effect` 返回清理函数——插件热卸载后会留到页面刷新（有 `querySelector` 幂等保护，不会重复堆积）。
+
+## 更新与支持
+
+- **不声明版本号。** `package.json` 里的 `version` 只是包管理器的技术要求，不是发版节奏，也不构成兼容性承诺；这个仓库没有 `releases`、没有更新日志承诺。
+- **仅按维护者自己的需求更新**，不保证会继续更新，也不保证跟进新版 DSH。能用就用，别把它当有 SLA 的依赖。
+- 想要稳定就钉提交：`github:apples1949/dsh-speed-meter#<sha>`。
+- 通过自建索引源安装时，条目钉在某个 commit 上——只有索引被手动刷新时才会变。
 
 ## 许可证
 
